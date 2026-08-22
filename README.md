@@ -58,5 +58,5 @@ tidy input demonstrates nothing.
 
 ## Built by
 
-[Urva Suthar](https://www.urvasuthar.in) — full-stack developer working
+[Urva Suthar](https://urvasuthar.in) — full-stack developer working
 on fintech and B2B SaaS. Available for freelance projects.

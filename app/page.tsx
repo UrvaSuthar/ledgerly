@@ -6,7 +6,7 @@ import type { Invoice } from "@/lib/schema"
 
 type Mode = "live" | "cached" | null
 
-const PORTFOLIO = "https://www.urvasuthar.in"
+const PORTFOLIO = "https://urvasuthar.in"
 
 function fmt(n: number | null, currency: string | null) {
   if (n === null) return "—"
