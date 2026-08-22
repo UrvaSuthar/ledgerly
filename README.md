@@ -2,7 +2,7 @@
 
 Turn an invoice — PDF, photo, or pasted text — into structured, validated data.
 
-**Live demo:** _(add URL after deploy)_
+**Live demo:** https://ledgerly-pi-eight.vercel.app
 
 Most extraction tools hand back confident JSON and leave you to discover the mistakes at
 reconciliation time. Ledgerly does two things differently:
