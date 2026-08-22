@@ -58,5 +58,5 @@ tidy input demonstrates nothing.
 
 ## Built by
 
-[Urva Suthar](https://v0-terminal-portfolio-blue.vercel.app) — full-stack developer working
+[Urva Suthar](https://urva.vercel.app) — full-stack developer working
 on fintech and B2B SaaS. Available for freelance projects.
