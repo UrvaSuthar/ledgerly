@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ledgerly
 
-## Getting Started
+Turn an invoice — PDF, photo, or pasted text — into structured, validated data.
 
-First, run the development server:
+**Live demo:** _(add URL after deploy)_
+
+Most extraction tools hand back confident JSON and leave you to discover the mistakes at
+reconciliation time. Ledgerly does two things differently:
+
+- **It flags what it isn't sure about.** Ambiguous dates (`03/04/2026` is genuinely
+  ambiguous), missing parties, split tax components, terms like "Net 30" that imply a due
+  date rather than stating one — all surfaced as warnings instead of silently guessed.
+- **It re-does the arithmetic itself.** Line items are summed, tax is checked against the
+  subtotal, and dates are sanity-checked in application code, not trusted to the model. On
+  the bundled "broken maths" sample this catches a €50 discrepancy the document hides.
+
+## How it works
+
+| | |
+|---|---|
+| Model | `anthropic/claude-sonnet-5` via Vercel AI Gateway |
+| Structured output | AI SDK v7 `generateText` + `Output.object` against a Zod schema |
+| Validation | `lib/schema.ts` — arithmetic and date checks run locally, after extraction |
+| Runtime | Next.js 16 App Router, Node runtime on Fluid Compute |
+
+Every field is `nullable` rather than optional by design: the model has to actively report
+that something is absent from the document instead of quietly omitting it. A zero tax line
+and a missing tax line mean different things to an accounts team.
+
+## Running it
 
 ```bash
+npm install
+echo "AI_GATEWAY_API_KEY=your_key" > .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Without a key the three bundled samples still return precomputed results, labelled `cached`
+in the UI. That's deliberate — a demo that 500s in front of someone is worse than no demo —
+but it is never presented as a live model call.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Layout
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/
+  page.tsx              UI — samples, paste, upload, results, CSV export
+  api/extract/route.ts  extraction endpoint, degrades to cached on failure
+lib/
+  schema.ts             Zod schema + local arithmetic validation
+  samples.ts            three sample invoices, each flawed differently
+  cached.ts             precomputed results for the no-key path
+```
 
-## Learn More
+The samples aren't clean documents. One is a standard Indian GST invoice with a CGST/SGST
+split, one has a date no parser can disambiguate without knowing the vendor's country, and
+one contains a subtotal that contradicts its own line items. An extractor that only handles
+tidy input demonstrates nothing.
 
-To learn more about Next.js, take a look at the following resources:
+## Built by
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[Urva Suthar](https://v0-terminal-portfolio-blue.vercel.app) — full-stack developer working
+on fintech and B2B SaaS. Available for freelance projects.
